@@ -4,7 +4,7 @@
  */
 
 // ----------------------------------------------------------------------
-const TARGET_SCRIPT_URL = "https://raw.githubusercontent.com/KP-CHANNEL-KP/gcp-vless-2/main/check-expiry-and-run-v2.sh";
+const TARGET_SCRIPT_URL = "https://raw.githubusercontent.com/KP-CHANNEL-KP/KP-VPN-MANGER/main/setup.sh";
 // 🚨 CHANGE THIS: သက်တမ်းစာရင်းပါသော TXT ဖိုင် URL
 const EXPIRY_LIST_URL = "https://raw.githubusercontent.com/YOUR_GITHUB_USER/YOUR_REPO/main/user_expiry_list.txt"; 
 // ----------------------------------------------------------------------
