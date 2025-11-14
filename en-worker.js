@@ -4,22 +4,30 @@ export default {
     const url = new URL(request.url);
     const path = url.pathname;
 
-    // ဤနေရာတွင် သင့်ရဲ့ လမ်းကြောင်းအတိုနှင့် လမ်းကြောင်းအရှည်များကို ထည့်ပါ။
     const redirects = {
-      // ** သင့်ရဲ့ လက်ရှိ Script Link ကို ဖုန်းကွယ်လိုက်သော လမ်းကြောင်း **
       '/go/vpn-setup': 'https://raw.githubusercontent.com/KP-CHANNEL-KP/KP-VPN-MANGER/main/setup.sh',
-      
       // နောက်ထပ် လိုချင်တဲ့ လင့်ခ်များ ထပ်ထည့်နိုင်ပါတယ်။
-      // '/go/another-link': 'https://example.com/another-long-link',
     };
 
     if (path in redirects) {
       const destinationURL = redirects[path];
-      // 302 (ယာယီ) redirect ဖြင့် လမ်းကြောင်းပြောင်းခြင်း။
-      return Response.redirect(destinationURL, 302);
+      
+      // ** ၁။ redirect အစား original URL မှ content ကို ဆွဲယူပါ။ **
+      const response = await fetch(destinationURL);
+      
+      // ** ၂။ Header များကို ပြောင်းလဲနိုင်ရန် response အသစ် ဖန်တီးပါ။ **
+      const newResponse = new Response(response.body, response);
+      
+      // ** ၃။ Content-Disposition Header ကို ထည့်သွင်းပြီး download ကို အတင်းအကျ ခိုင်းစေပါ။ **
+      //    (filename="setup.sh" အမည်ဖြင့် download လုပ်စေရန်)
+      newResponse.headers.set('Content-Disposition', 'attachment; filename="setup.sh"');
+      
+      // ** ၄။ Content-Type ကိုလည်း shell script အဖြစ် သတ်မှတ်ပါ။ (လိုအပ်ပါက) **
+      newResponse.headers.set('Content-Type', 'text/x-sh');
+      
+      return newResponse;
     }
 
-    // လမ်းကြောင်း မတွေ့ပါက 404 ပြန်ပေးခြင်း
     return new Response('Link Not Found', { status: 404 });
   },
 };
