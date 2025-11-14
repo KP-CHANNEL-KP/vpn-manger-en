@@ -1,34 +1,30 @@
-// Cloudflare Pages Worker (Proxy & Force Download)
+/**
+ * Cloudflare Worker: Pure Link Cloaking for setup script download.
+ */
+
+// ----------------------------------------------------------------------
+// 🔗 SETUP Script အတွက် URL (Cloaking လုပ်မယ့် link တစ်ခုတည်းသာ)
+const TARGET_SETUP_URL = "https://raw.githubusercontent.com/KP-CHANNEL-KP/KP-VPN-MANGER/main/setup.sh"; 
+// ----------------------------------------------------------------------
+
 export default {
-  async fetch(request, env) {
-    const url = new URL(request.url);
-    const path = url.pathname;
+    async fetch(request) { 
+        const url = new URL(request.url);
+        
+        // ======================================================================
+        // 1. Link Cloaking Logic (Setup Script Download အတွက်)
+        // ======================================================================
+        if (url.pathname === '/go/vpn-setup') {
+            
+            // TARGET_SETUP_URL မှ content ကို တိုက်ရိုက် fetch လုပ်ပြီး ပြန်ပို့သည်။
+            // ၎င်းသည် URL ကို ဖုံးကွယ်ပေးပြီး wget command ကို အောင်မြင်စေသည်။
+            return fetch(TARGET_SETUP_URL);
+        }
+        // ======================================================================
 
-    const redirects = {
-      // 1. စတင် download လုပ်မယ့် link
-      '/go/vpn-setup': 'https://raw.githubusercontent.com/KP-CHANNEL-KP/KP-VPN-MANGER/main/setup.sh',
-      
-      // 2. setup.sh အတွင်းမှ ဥပမာ Internal Link ကို ဖုန်းကွယ်ခြင်း
-      '/go/iizin-script': 'https://raw.githubusercontent.com/KP-CHANNEL-KP/KP-VPN-MANGER/main/main/zzn/iizin.sh',
-      
-      // ** သင့်ရဲ့ ကျန်တဲ့ Internal Link အရှည်များရှိပါက ဤနေရာတွင် ဆက်ထည့်ပါ **
-      // '/go/another-internal-file': 'https://original-link-to-another-file.com/file.sh',
-    };
-
-    if (path in redirects) {
-      const destinationURL = redirects[path];
-      
-      // Fetch the content and prepare for forced download
-      const response = await fetch(destinationURL);
-      const newResponse = new Response(response.body, response);
-      
-      // Force browser to download instead of displaying code
-      newResponse.headers.set('Content-Disposition', 'attachment; filename="setup.sh"');
-      newResponse.headers.set('Content-Type', 'text/x-sh');
-      
-      return newResponse;
+        // တခြား လမ်းကြောင်းများ ရောက်လာပါက Not Found ပြန်ပေးသည်။
+        return new Response('Link Not Found.', { status: 404 });
     }
-
-    return new Response('Link Not Found', { status: 404 });
-  },
 };
+
+// ** မှတ်ချက်: License Key စစ်ဆေးခြင်း၊ IP Locking နှင့် Target Script များအားလုံးကို ဖယ်ရှားပြီးဖြစ်သည်။ **
