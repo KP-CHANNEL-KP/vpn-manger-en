@@ -1,28 +1,29 @@
-// Cloudflare Pages Worker (ES Module Syntax)
+// Cloudflare Pages Worker (Proxy & Force Download)
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
     const path = url.pathname;
 
     const redirects = {
+      // 1. စတင် download လုပ်မယ့် link
       '/go/vpn-setup': 'https://raw.githubusercontent.com/KP-CHANNEL-KP/KP-VPN-MANGER/main/setup.sh',
-      // နောက်ထပ် လိုချင်တဲ့ လင့်ခ်များ ထပ်ထည့်နိုင်ပါတယ်။
+      
+      // 2. setup.sh အတွင်းမှ ဥပမာ Internal Link ကို ဖုန်းကွယ်ခြင်း
+      '/go/iizin-script': 'https://raw.githubusercontent.com/KP-CHANNEL-KP/KP-VPN-MANGER/main/main/zzn/iizin.sh',
+      
+      // ** သင့်ရဲ့ ကျန်တဲ့ Internal Link အရှည်များရှိပါက ဤနေရာတွင် ဆက်ထည့်ပါ **
+      // '/go/another-internal-file': 'https://original-link-to-another-file.com/file.sh',
     };
 
     if (path in redirects) {
       const destinationURL = redirects[path];
       
-      // ** ၁။ redirect အစား original URL မှ content ကို ဆွဲယူပါ။ **
+      // Fetch the content and prepare for forced download
       const response = await fetch(destinationURL);
-      
-      // ** ၂။ Header များကို ပြောင်းလဲနိုင်ရန် response အသစ် ဖန်တီးပါ။ **
       const newResponse = new Response(response.body, response);
       
-      // ** ၃။ Content-Disposition Header ကို ထည့်သွင်းပြီး download ကို အတင်းအကျ ခိုင်းစေပါ။ **
-      //    (filename="setup.sh" အမည်ဖြင့် download လုပ်စေရန်)
+      // Force browser to download instead of displaying code
       newResponse.headers.set('Content-Disposition', 'attachment; filename="setup.sh"');
-      
-      // ** ၄။ Content-Type ကိုလည်း shell script အဖြစ် သတ်မှတ်ပါ။ (လိုအပ်ပါက) **
       newResponse.headers.set('Content-Type', 'text/x-sh');
       
       return newResponse;
