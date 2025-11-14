@@ -2,15 +2,14 @@
  * Cloudflare Worker: 
  * Features: Browser Block, Key Validation (MULTI/MASTER).
  * * ဖယ်ရှားပြီးသော အပိုင်းများ:
- * - Timezone Fix Logic (MMT)
- * - License Key Default/Parsing Logic
- * - IP Locking Logic (1DV)
- * - Expiration Check (EXPIRY_LIST_URL ဖြင့် စစ်ဆေးခြင်း)
+ * - Timezone Fix Logic (MMT) - (ဖယ်ရှားပြီး)
+ * - License Key Default/Parsing Logic - (ဖယ်ရှားပြီး)
+ * - IP Locking Logic (1DV) - (ဖယ်ရှားပြီး)
+ * - Expiration Check (EXPIRY_LIST_URL ဖြင့် စစ်ဆေးခြင်း) - (ဖယ်ရှားပြီး)
  */
 
 // ----------------------------------------------------------------------
 const TARGET_SCRIPT_URL = "https://raw.githubusercontent.com/KP-CHANNEL-KP/KP-VPN-MANGER/main/setup.sh";
-// 🚨 EXPIRY_LIST_URL နှင့် Expiration Logic ကို ဖယ်ရှားလိုက်ပါပြီ။
 // ----------------------------------------------------------------------
 const ALLOWED_USER_AGENTS = ['curl']; 
 const LICENSE_NAMESPACE = 'LICENSES'; 
@@ -58,8 +57,6 @@ export default {
                 console.log(`MASTER Key ${licenseKey} Access Granted.`);
                 return fetchScript(TARGET_SCRIPT_URL);
             }
-            
-            // Note: Expiration Check Logic (EXPIRY_LIST_URL ဖြင့် စစ်ဆေးမှု) ကို ဤနေရာမှ လုံးဝ ဖယ်ရှားလိုက်ပြီ။
 
         } catch (e) {
             console.error(`Key Parsing/Validation Error: ${e.message}`);
@@ -68,7 +65,6 @@ export default {
         
         // ======================================================================
         // 3. Script Content ကို တောင်းယူပြီး ပေးပို့ပါမယ်။
-        // (Validation အောင်မြင်ပြီး Expiration Check ကို ဖယ်ရှားလိုက်ပြီဖြစ်၍ ဤနေရာတွင် တိုက်ရိုက် ပို့ပါမည်။)
         // ======================================================================
         return fetchScript(TARGET_SCRIPT_URL);
     }
